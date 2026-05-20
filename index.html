@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WHISTO – ويستو </title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #F0D080;
+    --gold-dim: #8B6914;
+    --red: #B22222;
+    --red-bright: #E8263A;
+    --dark: #0A0A0F;
+    --dark2: #111118;
+    --dark3: #1A1A24;
+    --dark4: #22222E;
+    --card-bg: #16161F;
+    --text: #F0EAD6;
+    --text-muted: #9090A0;
+    --suit-red: #D42B2B;
+    --suit-black: #F0EAD6;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Alexandria', sans-serif;
+    background: var(--dark);
+    color: var(--text);
+    overflow-x: hidden;
+    direction: rtl;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0; opacity: .4;
+  }
+  .lang-toggle {
+    position: fixed; top: 1.2rem; left: 1.5rem;
+    z-index: 1000;
+    background: rgba(20,20,28,.85);
+    border: 1px solid var(--gold-dim);
+    border-radius: 2rem;
+    display: flex; overflow: hidden;
+    backdrop-filter: blur(10px);
+  }
+  .lang-toggle button {
+    font-family: 'Alexandria', sans-serif;
+    padding: .45rem 1.1rem;
+    font-size: .8rem; font-weight: 600;
+    background: transparent; border: none;
+    cursor: pointer; color: var(--text-muted);
+    transition: all .25s; letter-spacing: .05em;
+  }
+  .lang-toggle button.active {
+    background: var(--gold); color: var(--dark); border-radius: 2rem;
+  }
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 900; padding: 1rem 3rem;
+    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(to bottom, rgba(10,10,15,0.95) 0%, transparent 100%);
+    backdrop-filter: blur(4px);
+  }
+  .nav-logo { font-size: 1.7rem; font-weight: 800; color: var(--gold); letter-spacing: .2em; text-transform: uppercase; text-shadow: 0 0 30px rgba(201,168,76,.5); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a { text-decoration: none; color: var(--text-muted); font-size: .88rem; font-weight: 500; transition: color .2s; letter-spacing: .03em; }
+  .nav-links a:hover { color: var(--gold); }
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 6rem 2rem 4rem;
+    position: relative; overflow: hidden;
+  }
+  .hero-cards { position: absolute; inset: 0; pointer-events: none; }
+  .floating-card {
+    position: absolute; width: 70px; height: 100px;
+    border-radius: 8px; border: 1px solid rgba(201,168,76,.2);
+    background: linear-gradient(135deg, rgba(22,22,31,.9), rgba(16,16,22,1));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; animation: floatCard linear infinite; opacity: 0;
+    box-shadow: 0 4px 20px rgba(0,0,0,.5), inset 0 1px 0 rgba(201,168,76,.1);
+  }
+  @keyframes floatCard {
+    0%   { transform: translateY(110vh) rotate(var(--r)); opacity: 0; }
+    10%  { opacity: .4; }
+    90%  { opacity: .3; }
+    100% { transform: translateY(-15vh) rotate(calc(var(--r) + 20deg)); opacity: 0; }
+  }
+  .hero-badge {
+    font-size: .78rem; font-weight: 600; letter-spacing: .25em; text-transform: uppercase;
+    color: var(--gold); border: 1px solid var(--gold-dim); padding: .4rem 1.2rem;
+    border-radius: 2rem; margin-bottom: 1.5rem; display: inline-block;
+    background: rgba(201,168,76,.08);
+  }
+  .hero-logo-img {
+    width: 160px; height: 160px; object-fit: contain; margin-bottom: 1rem;
+    filter: brightness(0) invert(1) drop-shadow(0 0 20px rgba(201,168,76,.6));
+    animation: pulseLogo 3s ease-in-out infinite;
+  }
+  @keyframes pulseLogo {
+    0%,100% { filter: brightness(0) invert(1) drop-shadow(0 0 20px rgba(201,168,76,.6)); }
+    50% { filter: brightness(0) invert(1) drop-shadow(0 0 40px rgba(201,168,76,.9)); }
+  }
+  h1.hero-title {
+    font-size: clamp(4rem, 12vw, 9rem); font-weight: 900; letter-spacing: .15em; line-height: 1;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 40%, var(--gold-dim) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    position: relative; margin-bottom: .5rem;
+  }
+  .hero-subtitle { font-size: clamp(1rem, 2.5vw, 1.3rem); font-weight: 300; color: var(--text-muted); margin-bottom: 2.5rem; letter-spacing: .1em; }
+  .hero-subtitle span { color: var(--gold); font-weight: 600; }
+  .suits-row { display: flex; gap: 1.2rem; justify-content: center; font-size: 2.2rem; margin-bottom: 2.5rem; }
+  .suit-r { color: var(--suit-red); }
+  .suit-b { color: var(--suit-black); opacity: .7; }
+  .cta-group { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%);
+    color: var(--dark); padding: .85rem 2.5rem; border-radius: 3rem;
+    font-family: 'Alexandria', sans-serif; font-size: .95rem; font-weight: 700;
+    border: none; cursor: pointer; letter-spacing: .08em; transition: all .3s;
+    box-shadow: 0 4px 20px rgba(201,168,76,.35);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(201,168,76,.5); }
+  .btn-outline {
+    background: transparent; color: var(--gold); padding: .85rem 2.5rem; border-radius: 3rem;
+    font-family: 'Alexandria', sans-serif; font-size: .95rem; font-weight: 600;
+    border: 1.5px solid var(--gold-dim); cursor: pointer; letter-spacing: .08em; transition: all .3s;
+  }
+  .btn-outline:hover { border-color: var(--gold); background: rgba(201,168,76,.08); transform: translateY(-2px); }
+  .scroll-hint {
+    position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: .5rem;
+    color: var(--gold-dim); animation: bounce 2s ease-in-out infinite;
+    font-size: .7rem; letter-spacing: .15em; text-transform: uppercase;
+  }
+  @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
+  section { position: relative; z-index: 1; }
+  .section-label { font-size: .72rem; font-weight: 700; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); margin-bottom: .75rem; }
+  .section-title { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; line-height: 1.15; margin-bottom: 1rem; }
+  .section-desc { font-size: 1rem; font-weight: 300; color: var(--text-muted); line-height: 1.8; max-width: 52ch; }
+  .divider { width: 60px; height: 2px; background: linear-gradient(270deg, var(--gold), transparent); margin: 1.5rem 0; }
+  [dir="ltr"] .divider { background: linear-gradient(90deg, var(--gold), transparent); }
+
+  /* ABOUT */
+  .about { padding: 8rem 6rem; display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; }
+  .about-visual { position: relative; }
+  .cards-stack { position: relative; width: 260px; height: 360px; margin: 0 auto; }
+  .stacked-card {
+    position: absolute; width: 200px; height: 280px; border-radius: 14px;
+    background: linear-gradient(145deg, var(--card-bg), var(--dark3));
+    border: 1px solid rgba(201,168,76,.25);
+    box-shadow: 0 20px 60px rgba(0,0,0,.6), inset 0 1px 0 rgba(201,168,76,.15);
+    display: flex; align-items: center; justify-content: center; font-size: 5rem; transition: transform .4s;
+  }
+  .stacked-card:nth-child(1) { transform: rotate(-12deg) translate(-20px, 10px); }
+  .stacked-card:nth-child(2) { transform: rotate(-4deg) translate(-5px, -5px); }
+  .stacked-card:nth-child(3) { transform: rotate(6deg) translate(20px, 5px); z-index: 3; }
+  .about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2.5rem; }
+  .stat-card { background: var(--card-bg); border: 1px solid rgba(201,168,76,.12); border-radius: 12px; padding: 1.25rem; text-align: center; }
+  .stat-card .num { font-size: 2rem; font-weight: 800; color: var(--gold); line-height: 1; }
+  .stat-card .lbl { font-size: .75rem; color: var(--text-muted); margin-top: .3rem; font-weight: 400; }
+
+  /* HOW TO PLAY */
+  .how { padding: 6rem; background: linear-gradient(180deg, var(--dark2) 0%, var(--dark) 100%); }
+  .how-header { text-align: center; margin-bottom: 4rem; }
+  .how-header .section-desc { margin: 0 auto; }
+  .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; max-width: 1100px; margin: 0 auto; }
+  .step-card {
+    background: var(--card-bg); border: 1px solid rgba(201,168,76,.1); border-radius: 16px;
+    padding: 2rem 1.5rem; position: relative; overflow: hidden; transition: transform .3s, border-color .3s;
+  }
+  .step-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent); opacity: 0; transition: opacity .3s;
+  }
+  .step-card:hover { transform: translateY(-4px); border-color: rgba(201,168,76,.3); }
+  .step-card:hover::before { opacity: 1; }
+  .step-num { font-size: 3.5rem; font-weight: 900; color: rgba(201,168,76,.12); line-height: 1; margin-bottom: .75rem; }
+  .step-icon { font-size: 2rem; margin-bottom: .75rem; }
+  .step-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: .5rem; color: var(--text); }
+  .step-card p { font-size: .85rem; color: var(--text-muted); line-height: 1.7; font-weight: 300; }
+
+  /* SCREENSHOTS */
+  .screenshots { padding: 6rem; overflow: hidden; }
+  .screenshots-header { margin-bottom: 3rem; }
+  .screens-scroll {
+    display: flex; gap: 1.5rem; overflow-x: auto; padding-bottom: 1rem;
+    scrollbar-width: thin; scrollbar-color: var(--gold-dim) transparent;
+    -webkit-overflow-scrolling: touch;
+  }
+  .screens-scroll::-webkit-scrollbar { height: 4px; }
+  .screens-scroll::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+  .screen-mock {
+    flex: 0 0 280px; height: 480px; border-radius: 24px;
+    background: linear-gradient(145deg, var(--dark3), var(--dark4));
+    border: 1px solid rgba(201,168,76,.15); overflow: hidden; position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,.5); transition: transform .3s; cursor: pointer;
+  }
+  .screen-mock:hover { transform: scale(1.03) translateY(-5px); }
+  .screen-inner { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5rem; gap: 1rem; }
+  .screen-tag { font-size: .7rem; font-weight: 600; letter-spacing: .15em; text-transform: uppercase; color: var(--gold); background: rgba(201,168,76,.1); padding: .3rem .8rem; border-radius: 2rem; }
+  .screen-title { font-size: 1.1rem; font-weight: 700; text-align: center; line-height: 1.3; }
+  .screen-desc { font-size: .8rem; color: var(--text-muted); text-align: center; }
+  .mock-cards { display: flex; gap: .5rem; flex-wrap: wrap; justify-content: center; }
+  .mc { font-size: 1.5rem; }
+  .screen-bar { width: 100%; height: 6px; border-radius: 3px; background: rgba(201,168,76,.1); overflow: hidden; }
+  .screen-bar-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--red-bright)); border-radius: 3px; }
+  .mock-table { width: 100%; background: rgba(0,0,0,.3); border-radius: 12px; padding: 1rem; display: flex; flex-direction: column; gap: .5rem; }
+  .mock-row { display: flex; justify-content: space-between; font-size: .75rem; color: var(--text-muted); padding: .35rem .5rem; border-radius: 6px; background: rgba(255,255,255,.03); }
+  .mock-row.highlight { background: rgba(201,168,76,.1); color: var(--gold); }
+
+  /* TEAM */
+  .team { padding: 6rem; background: var(--dark2); }
+  .team-header { text-align: center; margin-bottom: 4rem; }
+  .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem; max-width: 1100px; margin: 0 auto; }
+  .team-card {
+    background: var(--card-bg); border: 1px solid rgba(201,168,76,.1); border-radius: 20px;
+    padding: 2.5rem 1.5rem 2rem; text-align: center; position: relative; overflow: hidden; transition: all .3s;
+  }
+  .team-card.ceo { border-color: rgba(201,168,76,.4); background: linear-gradient(145deg, rgba(22,22,31,1), rgba(30,25,10,.6)); }
+  .team-card.ceo::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at top, rgba(201,168,76,.08), transparent 60%); pointer-events: none; }
+  .team-card:hover { transform: translateY(-6px); border-color: rgba(201,168,76,.3); }
+  .avatar { width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(135deg, var(--dark3), var(--dark4)); border: 2px solid rgba(201,168,76,.25); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; margin: 0 auto 1.2rem; position: relative; }
+  .ceo .avatar { border-color: var(--gold); box-shadow: 0 0 25px rgba(201,168,76,.3); width: 110px; height: 110px; font-size: 2.8rem; }
+  .ceo-badge { position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); font-size: .6rem; font-weight: 700; letter-spacing: .1em; background: var(--gold); color: var(--dark); padding: .15rem .5rem; border-radius: 2rem; white-space: nowrap; text-transform: uppercase; }
+  .member-name { font-size: 1.05rem; font-weight: 700; margin-bottom: .3rem; }
+  .member-role { font-size: .78rem; color: var(--gold); font-weight: 500; margin-bottom: .75rem; letter-spacing: .05em; }
+  .member-bio { font-size: .8rem; color: var(--text-muted); line-height: 1.7; font-weight: 300; }
+
+  /* FEATURES */
+  .features { padding: 5rem 6rem; background: linear-gradient(135deg, var(--dark3) 0%, var(--dark) 50%, var(--dark2) 100%); }
+  .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; max-width: 1000px; margin: 3rem auto 0; }
+  .feat { display: flex; gap: 1rem; align-items: flex-start; }
+  .feat-icon { font-size: 1.8rem; flex-shrink: 0; width: 52px; height: 52px; background: rgba(201,168,76,.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(201,168,76,.15); }
+  .feat-text h4 { font-size: .95rem; font-weight: 700; margin-bottom: .3rem; }
+  .feat-text p { font-size: .8rem; color: var(--text-muted); line-height: 1.7; font-weight: 300; }
+
+  /* CONTACT */
+  .contact { padding: 8rem 6rem; background: var(--dark); display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: start; }
+  .contact-form { display: flex; flex-direction: column; gap: 1.2rem; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .field-group { display: flex; flex-direction: column; gap: .5rem; }
+  .field-group label { font-size: .8rem; font-weight: 600; color: var(--text-muted); letter-spacing: .05em; }
+  .field-group input, .field-group textarea, .field-group select {
+    background: var(--card-bg); border: 1px solid rgba(201,168,76,.15); border-radius: 10px;
+    padding: .85rem 1rem; color: var(--text); font-family: 'Alexandria', sans-serif; font-size: .9rem;
+    outline: none; transition: border-color .2s; width: 100%;
+  }
+  .field-group input:focus, .field-group textarea:focus, .field-group select:focus { border-color: var(--gold); }
+  .field-group textarea { resize: vertical; min-height: 130px; }
+  .field-group select option { background: var(--dark3); }
+  .contact-info { display: flex; flex-direction: column; gap: 2rem; }
+  .info-item { display: flex; align-items: flex-start; gap: 1rem; }
+  .info-icon { font-size: 1.4rem; width: 48px; height: 48px; background: rgba(201,168,76,.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(201,168,76,.15); flex-shrink: 0; }
+  .info-text h4 { font-size: .9rem; font-weight: 700; margin-bottom: .2rem; }
+  .info-text p, .info-text a { font-size: .85rem; color: var(--text-muted); text-decoration: none; font-weight: 300; }
+  .info-text a:hover { color: var(--gold); }
+  .social-links { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: 2rem; }
+  .social-btn { display: flex; align-items: center; gap: .5rem; padding: .6rem 1.2rem; border-radius: 2rem; border: 1px solid rgba(201,168,76,.2); background: rgba(201,168,76,.05); color: var(--text-muted); font-family: 'Alexandria', sans-serif; font-size: .8rem; font-weight: 500; cursor: pointer; transition: all .2s; text-decoration: none; }
+  .social-btn:hover { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,.1); }
+
+  /* FOOTER */
+  footer { border-top: 1px solid rgba(201,168,76,.1); padding: 3rem 6rem; display: flex; align-items: center; justify-content: space-between; background: var(--dark2); flex-wrap: wrap; gap: 1rem; }
+  .footer-logo { font-size: 1.4rem; font-weight: 800; color: var(--gold); letter-spacing: .2em; }
+  .footer-copy { font-size: .8rem; color: var(--text-muted); font-weight: 300; }
+  .footer-suits { font-size: 1.2rem; display: flex; gap: .5rem; }
+
+  /* LTR */
+  [dir="ltr"] { direction: ltr; }
+  [dir="ltr"] nav { direction: ltr; }
+
+  /* REVEAL */
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--card-bg); border: 1px solid var(--gold-dim); color: var(--text); padding: .85rem 2rem; border-radius: 2rem; font-size: .88rem; z-index: 9999; transition: transform .4s; }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .about, .contact { grid-template-columns: 1fr; padding: 4rem 1.5rem; gap: 3rem; }
+    .how, .screenshots, .team, .features { padding: 4rem 1.5rem; }
+    .features-grid { grid-template-columns: 1fr 1fr; }
+    footer { padding: 2rem 1.5rem; text-align: center; flex-direction: column; }
+    .nav-links { display: none; }
+  }
+  @media (max-width: 600px) {
+    .features-grid { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .about-stats { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="lang-toggle">
+  <button id="btn-ar" class="active" onclick="setLang('ar')">عربي</button>
+  <button id="btn-en" onclick="setLang('en')">EN</button>
+</div>
+
+<nav>
+  <div class="nav-logo">WHISTO</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-cards" id="heroCards"></div>
+  <div class="hero-badge" data-ar="🃏 لعبة الورق السودانية" data-en="🃏 The Sudanese Card Game">🃏 لعبة الورق الأسطورية</div>
+  <img src="assets/logo.png" width="300"/>
+  <h1 class="hero-title">WHISTO</h1>
+  <p class="hero-subtitle"><span data-ar="العب" data-en="Play">العب</span> · <span data-ar="تحدّى" data-en="Challenge">تحدّى</span> · <span data-ar="إنتصر" data-en="Win">إنتصر</span></p>
+  <div class="suits-row">
+    <span class="suit-r">♥</span>
+    <span class="suit-b">♠</span>
+    <span class="suit-r">♦</span>
+    <span class="suit-b">♣</span>
+  </div>
+  <div class="cta-group">
+    <button class="btn-primary" onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})" data-ar="استكشف اللعبة" data-en="Explore the Game">استكشف اللعبة</button>
+    <button class="btn-outline" onclick="document.getElementById('team').scrollIntoView({behavior:'smooth'})" data-ar="من نحن؟" data-en="who we are?">من نحن؟</button>
+  </div>
+  <div class="scroll-hint">
+    <span data-ar="اكتشف أكثر" data-en="Discover More">اكتشف أكثر</span>
+    <span>↓</span>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about reveal" id="about">
+  <div class="about-text">
+    <p class="section-label" data-ar="نظرة عامة" data-en="Overview">نظرة عامة</p>
+    <h2 class="section-title" data-ar="ما هي لعبة ويستو؟" data-en="What is Whisto?">ما هي لعبة ويستو؟</h2>
+    <div class="divider"></div>
+    <p class="section-desc" data-ar="ويستو هي لعبة ورق استراتيجية بروح سودانية تُلعب بين فريقين من لاعبَين. تعتمد على التنبؤ بعدد الأوراق التي ستفوز بها كل جولة، وتتطلب التركيز والتخطيط والتنسيق مع شريكك. تتميز ويستو بتجربة مرئية فاخرة وسهولة تعلّمها مع عمق استراتيجي لا حدود له." data-en="Whisto is a strategic trick-taking card game of Sudanese origin played between two teams of two players. The game requires predicting the number of tricks you will win each round, demanding focus, planning, and coordination with your partner. Whisto features a premium visual experience with easy-to-learn mechanics hiding boundless strategic depth.">
+      ويستو هي لعبة ورق استراتيجية من أصل بريطاني تُلعب بين فريقين من لاعبَين. تعتمد على التنبؤ بعدد الأوراق التي ستفوز بها كل جولة، وتتطلب التركيز والتخطيط والتنسيق مع شريكك. تتميز ويستو بتجربة مرئية فاخرة وسهولة تعلّمها مع عمق استراتيجي لا حدود له.
+    </p>
+    <div class="about-stats">
+      <div class="stat-card">
+        <div class="num">4</div>
+        <div class="lbl" data-ar="لاعبون" data-en="Players">لاعبون</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">52</div>
+        <div class="lbl" data-ar="ورقة لعب" data-en="Playing Cards">ورقة لعب</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">∞</div>
+        <div class="lbl" data-ar="مشاهدين غير محدودين" data-en="Unlimited Viewers">جولة في كل شوط</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">∞</div>
+        <div class="lbl" data-ar="ساعات من المتعة" data-en="Hours of Fun">ساعات من المتعة</div>
+      </div>
+    </div>
+  </div>
+  <div class="about-visual">
+    <div class="cards-stack">
+      <div class="stacked-card"><span class="suit-r">♥</span></div>
+      <div class="stacked-card"><span class="suit-b">♠</span></div>
+      <div class="stacked-card"><span class="suit-r">♦</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW TO PLAY -->
+<section class="how reveal" id="how">
+  <div class="how-header">
+    <p class="section-label" data-ar="تعليمات اللعبة" data-en="Game Instructions">تعليمات اللعبة</p>
+    <h2 class="section-title" data-ar="كيف تلعب ويستو؟" data-en="How to Play Whisto?">كيف تلعب ويستو؟</h2>
+    <div class="divider" style="margin: 1rem auto;"></div>
+    <p class="section-desc" data-ar="تعلّم أساسيات اللعبة في دقائق واستمتع بعمق استراتيجي لا نهاية له مع أصدقائك وعائلتك." data-en="Learn the basics in minutes and enjoy endless strategic depth with friends and family.">
+      تعلّم أساسيات اللعبة في دقائق واستمتع بعمق استراتيجي لا نهاية له مع أصدقائك وعائلتك.
+    </p>
+  </div>
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-num">01</div>
+      <div class="step-icon">🃏</div>
+      <h3 data-ar="توزيع الأوراق" data-en="Deal the Cards">توزيع الأوراق</h3>
+      <p data-ar="يُوزَّع كامل الورق بالتساوي على أربعة لاعبين، كل لاعب يحصل على 13 ورقة." data-en="The entire deck is dealt evenly to four players, each receiving 13 cards.">يُوزَّع كامل الورق بالتساوي على أربعة لاعبين، كل لاعب يحصل على 13 ورقة.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">02</div>
+      <div class="step-icon">🤔</div>
+      <h3 data-ar="التنبؤ بالأوراق" data-en="Bid Your Tricks">التنبؤ بالأوراق</h3>
+      <p data-ar="كل لاعب يتنبأ بعدد الأوراق التي سيفوز بها في الشوط الحالي قبل بدء اللعب." data-en="Each player bids the number of tricks they expect to win before play begins.">كل لاعب يتنبأ بعدد الأوراق التي سيفوز بها في الشوط الحالي قبل بدء اللعب.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">03</div>
+      <div class="step-icon">⚔️</div>
+      <h3 data-ar="اللعب والمنافسة" data-en="Play & Compete">اللعب والمنافسة</h3>
+      <p data-ar="يلعب كل لاعب ورقة بدوره، ويفوز بالجولة من يملك أعلى ورقة من نفس النوع أو ورقة الاتو." data-en="Each player plays a card in turn; the highest card of the led suit or trump wins the trick.">يلعب كل لاعب ورقة بدوره، ويفوز بالجولة من يملك أعلى ورقة من نفس النوع أو ورقة الاتو.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">04</div>
+      <div class="step-icon">🏆</div>
+      <h3 data-ar="تسجيل النقاط" data-en="Score Points">تسجيل النقاط</h3>
+      <p data-ar="الفريق الذي يحقق تنبؤه أو أكثر يكسب نقاطاً.." data-en="Teams that match their bid exactly earn points. Over or under bids reduce your score.">الفريق الذي يطابق تنبؤه يكسب نقاطاً. الفوز الزائد أو الناقص يُقلل من رصيدك.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">05</div>
+      <div class="step-icon">🎯</div>
+      <h3 data-ar="الاتو (ورقة القوة)" data-en="Trump Cards">الاتو (ورقة القوة)</h3>
+      <p data-ar="في كل شوط يُحدَّد نوع الاتو، وأوراقه تتغلب على أي ورقة أخرى مهما كانت قيمتها." data-en="Each round a trump suit is designated; trump cards beat any other suit regardless of rank.">في كل شوط يُحدَّد نوع الاتو، وأوراقه تتغلب على أي ورقة أخرى مهما كانت قيمتها.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">06</div>
+      <div class="step-icon">👑</div>
+      <h3 data-ar="الفوز باللعبة" data-en="Win the Game">الفوز باللعبة</h3>
+      <p data-ar="الفريق الذي يصل إلى الحد المتفق عليه من النقاط أولاً يُعلَن بطلاً للمباراة." data-en="The first team to reach the agreed score limit is declared the match winner.">الفريق الذي يصل إلى الحد المتفق عليه من النقاط أولاً يُعلَن بطلاً للمباراة.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SCREENSHOTS -->
+ 
+<section class="screenshots reveal" id="screens">
+  <div class="screenshots-header">
+    <p class="section-label" data-ar="واجهة التطبيق" data-en="App Interface">واجهة التطبيق</p>
+    <h2 class="section-title" data-ar="لقطات من اللعبة" data-en="Game Screenshots">لقطات من اللعبة</h2>
+    <div class="divider"></div>
+    <p class="section-desc" data-ar="تصميم فاخر مع واجهة سهلة الاستخدام تمنحك تجربة لعب استثنائية." data-en="Premium design with an intuitive interface delivering an exceptional gaming experience.">تصميم فاخر مع واجهة سهلة الاستخدام تمنحك تجربة لعب استثنائية.</p>
+  </div>
+  <div class="screens-scroll">
+
+</section>
+
+<!-- FEATURES -->
+<section class="features reveal" id="features">
+  <div style="text-align:center;">
+    <p class="section-label" data-ar="مميزات اللعبة" data-en="Game Features">مميزات اللعبة</p>
+    <h2 class="section-title" data-ar="لماذا ويستو؟" data-en="Why Whisto?">لماذا ويستو؟</h2>
+    <div class="divider" style="margin: 1rem auto;"></div>
+  </div>
+  <div class="features-grid">
+    <div class="feat reveal">
+      <div class="feat-icon">🎨</div>
+      <div class="feat-text">
+        <h4 data-ar="تصميم فاخر" data-en="Premium Design">تصميم فاخر</h4>
+        <p data-ar="واجهة مستخدم أنيقة بألوان ذهبية داكنة تمنحك إحساساً بالفخامة في كل جلسة لعب." data-en="Elegant dark-gold UI giving you a luxury feel in every gaming session.">واجهة مستخدم أنيقة بألوان ذهبية داكنة تمنحك إحساساً بالفخامة في كل جلسة لعب.</p>
+      </div>
+    </div>
+    <div class="feat reveal">
+      <div class="feat-icon">⚡</div>
+      <div class="feat-text">
+        <h4 data-ar="أداء سريع" data-en="Fast Performance">أداء سريع</h4>
+        <p data-ar="استجابة فورية وتجربة لعب سلسة دون أي تأخير أو انقطاع أثناء المباريات." data-en="Instant response and smooth gameplay with zero lag or interruption during matches.">استجابة فورية وتجربة لعب سلسة دون أي تأخير أو انقطاع أثناء المباريات.</p>
+      </div>
+    </div>
+    <div class="feat reveal">
+      <div class="feat-icon">👥</div>
+      <div class="feat-text">
+        <h4 data-ar="لعب جماعي" data-en="Multiplayer">لعب جماعي</h4>
+        <p data-ar="العب مع أصدقائك وعائلتك في نفس الغرفة لتجربة اجتماعية لا تُنسى." data-en="Play with friends and family in the same room for an unforgettable social experience.">العب مع أصدقائك وعائلتك في نفس الغرفة لتجربة اجتماعية لا تُنسى.</p>
+      </div>
+    </div>
+    <div class="feat reveal">
+      <div class="feat-icon">📊</div>
+      <div class="feat-text">
+        <h4 data-ar="إحصائيات مفصلة" data-en="Detailed Stats">إحصائيات مفصلة</h4>
+        <p data-ar="تتبع أداءك ومعدلات فوزك وأفضل مبارياتك من خلال لوحة إحصائيات شاملة." data-en="Track your performance, win rates, and best matches through a comprehensive stats dashboard.">تتبع أداءك ومعدلات فوزك وأفضل مبارياتك من خلال لوحة إحصائيات شاملة.</p>
+      </div>
+    </div>
+    <div class="feat reveal">
+      <div class="feat-icon">🌍</div>
+      <div class="feat-text">
+        <h4 data-ar="ثنائي اللغة" data-en="Bilingual">ثنائي اللغة</h4>
+        <p data-ar="دعم كامل للغتَين العربية والإنجليزية مع تصميم متجاوب مع اتجاه النص." data-en="Full Arabic and English support with responsive RTL/LTR layout switching.">دعم كامل للغتَين العربية والإنجليزية مع تصميم متجاوب مع اتجاه النص.</p>
+      </div>
+    </div>
+    <div class="feat reveal">
+      <div class="feat-icon">🔔</div>
+      <div class="feat-text">
+        <h4 data-ar="قواعد مرنة" data-en="Flexible Rules">قواعد مرنة</h4>
+        <p data-ar="اختر من بين عدة أنماط لعب وأنظمة تسجيل نقاط مختلفة تناسب جميع المستويات." data-en="Choose from multiple game modes and scoring systems suitable for all skill levels.">اختر من بين عدة أنماط لعب وأنظمة تسجيل نقاط مختلفة تناسب جميع المستويات.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section class="team reveal" id="team">
+  <div class="team-header">
+    <p class="section-label" data-ar="فريق العمل" data-en="Our Team">فريق العمل</p>
+    <h2 class="section-title" data-ar="العقول خلف ويستو" data-en="The Minds Behind Whisto">العقول خلف ويستو</h2>
+    <div class="divider" style="margin: 1rem auto;"></div>
+    <p class="section-desc" style="margin:0 auto;" data-ar="فريق متكامل من المبدعين والمطورين الشغوفين بصناعة تجارب لعب استثنائية." data-en="An integrated team of passionate creators and developers dedicated to crafting exceptional gaming experiences.">فريق متكامل من المبدعين والمطورين الشغوفين بصناعة تجارب لعب استثنائية.</p>
+  </div>
+  <div class="team-grid">
+    <div class="team-card ceo">
+      <div class="avatar">
+        👑
+        <span class="ceo-badge">CEO</span>
+      </div>
+      <div class="member-name" data-ar="هزبر صغيرون (ليون)" data-en="HEZBR SEGIRON (LION)">هزبر (ليون)</div>
+      <div class="member-role" data-ar="المؤسس | مدير قسم المجتمع" data-en="CEO | COMMUNITY MANAGER">المؤسس | مدير قسم المجتمع</div>
+      <p class="member-bio" data-ar="قائد رؤية ويستو وأحد صاحبي الفكرة الأصلية. يجمع بين خبرة واسعة وشغف حقيقي بالويست." data-en="The visionary behind Westo and one of the original creators of the concept. We have extensive experience and a genuine passion for Whisto.">قائد رؤية ويستو وصاحب الفكرة الأصلية. يجمع بين خبرة واسعة في تطوير الألعاب وشغف حقيقي بتجربة المستخدم.</p>
+    </div>
+    <div class="team-card ceo">
+      <div class="avatar">
+        👑
+        <span class="ceo-badge">CEO</span>
+      </div>
+      <div class="member-name" data-ar="أشرف جعفر (ود البدوي)" data-en="ASHRAF JAAFAR">ود البدوي</div>
+      <div class="member-role" data-ar="المؤسس | مدير قسم التطوير" data-en="CEO | DEV MANAGER">المؤسس | مدير قسم التطوير</div>
+      <p class="member-bio" data-ar="قائد رؤية ويستو وأحد صاحبي الفكرة الأصلية. يمتلك خلفية واسعة وكبيرة في عالم البرمجيات والتطوير." data-en="Westo's visionary leader and one of the original creators of the idea. He possesses a broad and extensive background in the world of software and development.">قائد رؤية ويستو وصاحب الفكرة الأصلية. يجمع بين خبرة واسعة في تطوير الألعاب وشغف حقيقي بتجربة المستخدم.</p>
+    </div>
+    <div class="team-card">
+      <div class="avatar">💻</div>
+      <div class="member-name" data-ar="قتادة أحمد" data-en="QTADA AHMED">قتادة احمد</div>
+      <div class="member-role" data-ar="المستشار والخبير الرقمي" data-en="TECHNICAL EXPERT CONSULTANT">كبير المطورين</div>
+      <p class="member-bio" data-ar="مطور متمرس بخبرة ممتدة في تطوير الألعاب والبرمجيات، مسؤول عن ادارة محرك اللعبة الأساسي والدعم التقني للمنظومة." data-en="A seasoned developer with extensive experience in game and software development, responsible for managing the core game engine and providing technical support for the system.">مطور متمرس بخبرة 8 سنوات في تطوير تطبيقات الجوال، مسؤول عن بناء محرك اللعبة الأساسي.</p>
+    </div>
+    <div class="team-card">
+      <div class="avatar">💻</div>
+      <div class="member-name" data-ar="طه عبدالكريم" data-en="TAHA A. KAREEM">طه عبدالكريم</div>
+      <div class="member-role" data-ar="مطور ومبرمج الألعاب" data-en="GAME ENGINE DEVELOPER">كبير المطورين</div>
+      <p class="member-bio" data-ar="مطور متمرس بخبرة 3 سنوات في تطوير الألعاب، مسؤول عن برمجة وتنفيذ محرك اللعبة الأساسي." data-en="Experienced developer with 3 years of experience in game development, responsible for programming and implementing the core game engine.">مطور متمرس بخبرة 8 سنوات في تطوير تطبيقات الجوال، مسؤول عن بناء محرك اللعبة الأساسي.</p>
+    </div>
+    
+  <div class="team-card">
+      <div class="avatar">📱</div>
+      <div class="member-name" data-ar="حسام محمد" data-en="HUSSAM MO">حسام محمد</div>
+      <div class="member-role" data-ar="مطور الواجهات" data-en="UI/UX Developer">مطور الواجهات</div>
+      <p class="member-bio" data-ar="مطور متخصص في واجهات التطبيقات التفاعلية وضمان تجربة مستخدم سلسة على جميع الأجهزة والمنصات." data-en="Specialist in interactive app interfaces ensuring smooth user experience across all devices and platforms.">متخصص في واجهات التطبيقات التفاعلية وضمان تجربة مستخدم سلسة على جميع الأجهزة والمنصات.</p>
+    </div>
+    <div class="team-card">
+      <div class="avatar">🎨</div>
+      <div class="member-name" data-ar="أحمد عمر" data-en="Ahmed Omer">أحمد عمر</div>
+      <div class="member-role" data-ar="مصمم جرافيك" data-en="Graphic Designer">مدير التصميم</div>
+      <p class="member-bio" data-ar="مصمم إبداعي يجمع بين الجماليات الرفيعة والوظائف العملية، صاحب الهوية البصرية الفريدة لويستو." data-en="Creative designer blending refined aesthetics with practical functionality, the creator of Whisto's unique visual identity.">مصممة إبداعية تجمع بين الجماليات الرفيعة والوظائف العملية، صاحبة الهوية البصرية الفريدة لويستو.</p>
+    </div>
+    
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact reveal" id="contact">
+  <div class="contact-text">
+    <p class="section-label" data-ar="تواصل معنا" data-en="Get in Touch">تواصل معنا</p>
+    <h2 class="section-title" data-ar="هل لديك سؤال؟" data-en="Have a Question?">هل لديك سؤال؟</h2>
+    <div class="divider"></div>
+    <p class="section-desc" data-ar="نحن هنا للإجابة عن كل استفساراتك. سواء كنت مطور أو لاعب أو شريك محتمل، يسعدنا سماعك." data-en="We're here to answer all your questions. Whether you're a developer, player, or potential partner, we'd love to hear from you.">نحن هنا للإجابة عن كل استفساراتك. سواء كنت مطور أو لاعب أو شريك محتمل، يسعدنا سماعك.</p>
+    <div class="contact-info" style="margin-top:2.5rem;">
+      <div class="info-item">
+        <div class="info-icon">📧</div>
+        <div class="info-text">
+          <h4 data-ar="البريد الإلكتروني" data-en="Email">البريد الإلكتروني</h4>
+          <a href="mailto:hezbr.segiron@gmail.com">hezbr.segiron@gmail.com</a>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">📱</div>
+        <div class="info-text">
+          <h4 data-ar="واتساب" data-en="WhatsApp">واتساب</h4>
+          <a href="#">+966 54 180 7721</a>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">📍</div>
+        <div class="info-text">
+          <h4 data-ar="الموقع" data-en="Location">الموقع</h4>
+          <p data-ar="المملكة العربية السعودية" data-en="Kingdom of Saudi Arabia">المملكة العربية السعودية</p>
+        </div>
+      </div>
+    </div>
+    <div class="social-links">
+      <a href="#" class="social-btn">𝕏 Twitter</a>
+      <a href="#" class="social-btn">📸 Instagram</a>
+      <a href="#" class="social-btn">in LinkedIn</a>
+      <a href="#" class="social-btn">▶ YouTube</a>
+    </div>
+  </div>
+  <div>
+    <form class="contact-form" onsubmit="handleSubmit(event)">
+      <div class="form-row">
+        <div class="field-group">
+          <label data-ar="الاسم الأول" data-en="First Name">الاسم الأول</label>
+          <input type="text" placeholder="" data-ar-placeholder="محمد" data-en-placeholder="John" />
+        </div>
+        <div class="field-group">
+          <label data-ar="اسم العائلة" data-en="Last Name">اسم العائلة</label>
+          <input type="text" placeholder="" data-ar-placeholder="الأحمد" data-en-placeholder="Smith" />
+        </div>
+      </div>
+      <div class="field-group">
+        <label data-ar="البريد الإلكتروني" data-en="Email Address">البريد الإلكتروني</label>
+        <input type="email" data-ar-placeholder="example@email.com" data-en-placeholder="example@email.com" />
+      </div>
+      <div class="field-group">
+        <label data-ar="موضوع الرسالة" data-en="Subject">موضوع الرسالة</label>
+        <select>
+          <option value="" data-ar="اختر الموضوع" data-en="Select Subject">اختر الموضوع</option>
+          <option value="support" data-ar="دعم فني" data-en="Technical Support">دعم فني</option>
+          <option value="partner" data-ar="شراكة" data-en="Partnership">شراكة</option>
+          <option value="feedback" data-ar="ملاحظات" data-en="Feedback">ملاحظات</option>
+          <option value="other" data-ar="أخرى" data-en="Other">أخرى</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label data-ar="رسالتك" data-en="Your Message">رسالتك</label>
+        <textarea data-ar-placeholder="اكتب رسالتك هنا..." data-en-placeholder="Write your message here..."></textarea>
+      </div>
+      <button type="submit" class="btn-primary" style="width:100%;" data-ar="إرسال الرسالة ✉️" data-en="Send Message ✉️">إرسال الرسالة ✉️</button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">WHISTO</div>
+  <p class="footer-copy" data-ar="© 2026 ويستو. جميع الحقوق محفوظة." data-en="© 2025 Whisto. All rights reserved.">© 2026 ويستو. جميع الحقوق محفوظة.</p>
+  <div class="footer-suits">
+    <span class="suit-r">♥</span>
+    <span class="suit-b">♠</span>
+    <span class="suit-r">♦</span>
+    <span class="suit-b">♣</span>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const CARDS = ['♥','♠','♦','♣','A','K','Q','J'];
+const heroCards = document.getElementById('heroCards');
+for(let i=0;i<14;i++){
+  const c = document.createElement('div');
+  c.className = 'floating-card';
+  const suit = CARDS[Math.floor(Math.random()*CARDS.length)];
+  c.innerHTML = ['♥','♦'].includes(suit) ? `<span style="color:var(--suit-red)">${suit}</span>` : suit;
+  c.style.cssText = `left:${Math.random()*100}%;--r:${(Math.random()-0.5)*30}deg;animation-duration:${8+Math.random()*12}s;animation-delay:${-Math.random()*15}s;`;
+  heroCards.appendChild(c);
+}
+
+let lang = 'ar';
+function setLang(l){
+  lang = l;
+  document.getElementById('btn-ar').classList.toggle('active', l==='ar');
+  document.getElementById('btn-en').classList.toggle('active', l==='en');
+  document.documentElement.lang = l;
+  document.documentElement.dir = l==='ar' ? 'rtl' : 'ltr';
+  document.querySelectorAll('[data-ar],[data-en]').forEach(el => {
+    const txt = el.getAttribute('data-'+l);
+    if(txt) el.textContent = txt;
+  });
+  document.querySelectorAll('[data-ar-placeholder],[data-en-placeholder]').forEach(el => {
+    const ph = el.getAttribute('data-'+l+'-placeholder');
+    if(ph) el.placeholder = ph;
+  });
+}
+setLang('ar');
+
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+},{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+function handleSubmit(e){
+  e.preventDefault();
+  const toast = document.getElementById('toast');
+  toast.textContent = lang==='ar' ? '✅ تم إرسال رسالتك بنجاح!' : '✅ Message sent successfully!';
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'), 3500);
+  e.target.reset();
+}
+</script>
+</body>
+</html>
